@@ -46,6 +46,7 @@ namespace COMP2084Store.Controllers
         // GET: Brands/Create
         public IActionResult Create()
         {
+            if (!User.Identity.IsAuthenticated) return Redirect("/Identity/Account/Login");
             return View();
         }
 
@@ -68,6 +69,7 @@ namespace COMP2084Store.Controllers
         // GET: Brands/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            if (!User.Identity.IsAuthenticated) return Redirect("/Identity/Account/Login");
             if (id == null)
             {
                 return NotFound();
@@ -119,6 +121,8 @@ namespace COMP2084Store.Controllers
         // GET: Brands/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            if (!User.Identity.IsAuthenticated) return Redirect("/Identity/Account/Login");
+
             if (id == null)
             {
                 return NotFound();

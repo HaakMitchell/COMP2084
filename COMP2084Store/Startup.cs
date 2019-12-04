@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using COMP2084Store.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using COMP2084Store.Models;
 
 namespace COMP2084Store
 {
@@ -33,14 +34,20 @@ namespace COMP2084Store
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
+            services.AddIdentity<ApplicationUser, ApplicationRole>()
+                           .AddRoles<ApplicationRole>()
+                           .AddRoleManager<RoleManager<ApplicationRole>>()
+                           .AddEntityFrameworkStores<ApplicationDbContext>()
+                           .AddDefaultTokenProviders();
+
+            services.AddSession();
+
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1).AddSessionStateTempDataProvider();
 
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+                    options.UseSqlServer(Configuration.GetConnectionString("COMP2084StoreContext")));
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -60,7 +67,7 @@ namespace COMP2084Store
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-
+            app.UseSession();
             app.UseAuthentication();
 
             app.UseMvc(routes =>
